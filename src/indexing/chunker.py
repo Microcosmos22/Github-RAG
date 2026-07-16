@@ -19,23 +19,72 @@ function cuda...
 OUTPUT
 
 [
- {
-  "text": "def cuda()...",
-  "file": "torch/cuda.py",
-  "line": 100
- }
-]"""
+  {
+    "text": "...",
+    "file": "torch/cuda/memory.py",
+    "start_line": 120,
+    "end_line": 158
+  },
+  ...
+]
+"""
+
+from pathlib import Path
+import json
+
 
 class CodeChunker:
 
-    def __init__(
-        self,
-        chunk_size=1000,
-        overlap=200
-    ):
-        self.chunk_size=chunk_size
-        self.overlap=overlap
+    def __init__(self,input_dir="data/raw/repo_files",output_file="data/chunks/chunks.json",
+                 chunk_size=100,overlap=20):
 
+        self.input_dir = Path(input_dir)
+        self.output_file = Path(output_file)
 
-    def split_file(self,path):
-        pass
+        self.chunk_size = chunk_size
+        self.overlap = overlap
+
+        self.extensions = {".py",".cpp",".cc",".c",".hpp",".h",".md",".rst"}
+
+    def get_files(self):
+        return [f for f in self.input_dir.rglob("*") if f.suffix in self.extensions]
+
+    def chunk_file(self, path):
+
+        lines = path.read_text(errors="ignore").splitlines()
+        chunks = []
+        step = self.chunk_size - self.overlap
+
+        for start in range(0, len(lines), step):
+            end = min(start + self.chunk_size, len(lines))
+
+            chunks.append({
+                "text": "\n".join(lines[start:end]),
+                "file": str(path.relative_to(self.input_dir)),
+                "extension": path.suffix,
+                "start_line": start + 1,
+                "end_line": end
+            })
+
+        return chunks
+
+    def chunk_repository(self):
+
+        chunks = []
+
+        for file in self.get_files():
+            chunks.extend(self.chunk_file(file))
+
+        self.output_file.parent.mkdir(parents=True, exist_ok=True)
+
+        self.output_file.write_text(
+            json.dumps(chunks, indent=2),
+            encoding="utf-8"
+        )
+
+        print(f"Saved {len(chunks)} chunks.")
+
+if __name__ == "__main__":
+    chunker = CodeChunker()
+
+    chunker.chunk_repository()
