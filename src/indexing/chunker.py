@@ -35,7 +35,7 @@ import json
 
 class CodeChunker:
 
-    def __init__(self,input_dir="data/raw/repo_files",output_file="data/chunks/chunks.json",
+    def __init__(self,input_dir=r"C:\Users\PC\Documents\Github-RAG\data",output_file=r"C:\Users\PC\Documents\Github-RAG\data\chunks\chunks.json",
                  chunk_size=100,overlap=20):
 
         self.input_dir = Path(input_dir)
@@ -47,7 +47,14 @@ class CodeChunker:
         self.extensions = {".py",".cpp",".cc",".c",".hpp",".h",".md",".rst"}
 
     def get_files(self):
-        return [f for f in self.input_dir.rglob("*") if f.suffix in self.extensions]
+
+        files = [
+            f for f in self.input_dir.rglob("*")
+            if f.is_file() and f.suffix.lower() in self.extensions
+        ]
+
+        print("Found:", len(files))
+        return files
 
     def chunk_file(self, path):
 
@@ -69,9 +76,8 @@ class CodeChunker:
         return chunks
 
     def chunk_repository(self):
-
         chunks = []
-
+        print(f"Chunking {len(self.get_files())} files")
         for file in self.get_files():
             chunks.extend(self.chunk_file(file))
 

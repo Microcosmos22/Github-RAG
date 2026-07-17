@@ -77,51 +77,50 @@ class GithubCrawler:
 
         parts = self.repo_url.rstrip("/").split("/")
 
-        owner = parts[-2]
-        repo = parts[-1]
+        self.owner = parts[-2]
+        self.repo = parts[-1]
 
-        return owner, repo
+        return self.owner, self.repo
 
     def download_issues(self):
-        """
-        Download Github issues.
-        """
-        print(f" Github token (downloading issues): {self.token}")
+        if self.issues_file.exists():
+            print("download_issues: issues.json exists already")
+            return
 
-        owner, repo = self.get_repo_information()
+        url = f"https://api.github.com/repos/{self.owner}/{self.repo}/issues"
 
-        url = (f"https://api.github.com/repos/"f"{owner}/{repo}/issues")
+        headers = {
+            "Authorization": f"Bearer {self.token}",
+            "Accept": "application/vnd.github+json"
+        }
 
-        params = {"state": "all","per_page": 100}
         issues = []
-        page = 1
-        print("Downloading issues...")
+
+        with tqdm(desc="Downloading issues") as pbar:
+            while url:
+                response = requests.get(url, headers=headers,
+                    params={"per_page": 100,"state": "open"})
+
+                if response.status_code != 200:
+                    raise Exception(response.text)
+
+                batch = response.json()
+                issues.extend(batch)
+
+                # Get next page URL from GitHub headers
+                url = None
+                if "next" in response.links:
+                    url = response.links["next"]["url"]
+
+                pbar.update(len(batch))
+                pbar.set_postfix(total=len(issues))
 
 
-        while True:
-            params["page"] = page
-            response = requests.get(url,headers=self.headers,params=params)
-
-            if response.status_code != 200:
-                raise Exception(response.text)
-
-            data = response.json()
-
-            if len(data) == 0:
-                break
-
-            for issue in data:
-                # Github API returns PRs as issues
-                if "pull_request" not in issue:
-
-                    issues.append({"title": issue["title"],"body": issue["body"],"number": issue["number"],
-                            "comments": issue["comments"],"url": issue["html_url"]})
-
-            page += 1
-
+        # Exclude pull requests
+        issues = [issue for issue in issues if "pull_request" not in issue]
+        print(f"Downloaded {len(issues)} issues")
 
         with open(self.issues_file,"w",encoding="utf-8") as f:
-
             json.dump(issues,f,indent=2,ensure_ascii=False)
 
         print(f"Saved {len(issues)} issues")
@@ -149,6 +148,7 @@ class GithubCrawler:
                 raise Exception(response.text)
 
             data = response.json()
+            batch = response.json()
 
             if len(data) == 0:
                 break
