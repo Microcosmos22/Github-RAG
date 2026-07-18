@@ -30,15 +30,19 @@ import json, os, requests
 import numpy as np
 from llama_cpp import Llama
 
-class FlatRetriever:
+class DenseRetriever:
 
-    def __init__(self, llm, embedder = "BAAI/bge-base-en-v1.5", vectorstore = None):
+    def __init__(self, llm,
+                 index_path = r"C:\Users\PC\Documents\Github-RAG\data\embeddings\faiss.index",
+                 metadata_path = r"C:\Users\PC\Documents\Github-RAG\data\embeddings\metadata.json",
+                 embedder = "BAAI/bge-base-en-v1.5", vectorstore = None):
         self.llm = llm
         self.embedder = Embedder(model_name=embedder)
         if vectorstore is None: # Use the standard pathfiles
-            self.store = VectorStore()
+            self.store = VectorStore(index_path=index_path,
+                metadata_path=metadata_path)
 
-    def build_flatIP(self, chunks):
+    def build(self, chunks, searchtype = "flat"):
         """
         Chunks will be a list containing each:
 
@@ -56,7 +60,7 @@ class FlatRetriever:
 
         """ Make batches of texts to prevent RAM exceeding. Then, EMBED using BAAI"""
         all_embeddings = []
-        steps = 50
+        steps = 5000
 
         for i in range(0, len(texts), steps):
             batch = texts[i:min(i+steps,len(texts))]
@@ -66,9 +70,12 @@ class FlatRetriever:
             embeddings = np.vstack(all_embeddings)
             # embeddings.shape == (10000, 768)
 
-            self.store.build_flatIP(embeddings,chunks)
+        if searchtype == "flat":
+            self.store.build(embeddings,chunks, searchtype)
+        elif searchtype == "ivf":
+            self.store.build(embeddings, chunks, searchtype)
 
-            self.store.save()
+        self.store.save()
 
     def load_flatIP(self):
         self.store.load()
