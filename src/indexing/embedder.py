@@ -8,7 +8,7 @@ class Embedder:
         # A heavier version: "BAAI/bge-code-v1"
         self.model = SentenceTransformer(model_name)
 
-    def embed(self,texts,batch_size=4,normalize_embeddings=True,) -> np.ndarray:
+    def embed(self,texts,progress=True,batch_size=4,normalize_embeddings=True,) -> np.ndarray:
         """
         Embed a list of text chunks.
 
@@ -23,5 +23,5 @@ class Embedder:
         np.ndarray of shape (N, embedding_dim)
         """
         return self.model.encode(texts, batch_size=batch_size,
-            show_progress_bar=True, convert_to_numpy=True,
+            show_progress_bar=progress, convert_to_numpy=True,
             normalize_embeddings=normalize_embeddings)

@@ -1,41 +1,43 @@
 from datasets import load_dataset
 from src.retriever import FlatRetriever
 from llama_cpp import Llama
+import numpy as np
+"""
+We have a benchmark dataset, with queries (docstrings)
+"""
 
-llm = Llama(model_path=r"C:\Users\PC\Documents\Github-RAG\qwen2.5-coder-7b-instruct-q4_k_m-00001-of-00002.gguf",n_ctx=8192,n_threads=8)
+import os
+print(os.cpu_count())
+
+llm = Llama(model_path=r"C:\Users\PC\Documents\Github-RAG\qwen2.5-coder-7b-instruct-q4_k_m-00001-of-00002.gguf",n_ctx=2048,n_threads=8, verbose=False)
 retriever = FlatRetriever(llm)
 dataset = load_dataset("code-search-net/code_search_net","python")
+small_test = dataset["test"].select(range(1000))
 
 snippets = []
 queries = []
 ground_truth = []
 
-for idx, sample in enumerate(dataset["test"]):
+print(dataset["test"].column_names)
+
+for idx, sample in enumerate(small_test):
 
     snippets.append(sample["whole_func_string"])
-
     # We use the docstring as the query
     queries.append(sample["func_documentation_string"])
     # Ground truth is that we know the ID of the corresponding snippets
     ground_truth.append(idx)
 
-# Make a semantic vector out of the snippet
-embeddings = retriever.embedder.embed(
-    snippets,
-    batch_size=16
-)
+print("Lists for snippets, queries, GT ready\n\n\n\n")
 
-store.build(
-    embeddings,
-    snippets
-)
+embeddings = retriever.embedder.embed(snippets,batch_size=16)
 
-query_embedding = embedder.embed([query])
+print("Embeddings ready\n")
 
-scores, ids = store.search(
-    query_embedding,
-    k=10
-)
+retriever.store.build_flatIP(embeddings,snippets)
+retriever.store.save()
+
+print("VectorStore ready\n\n")
 
 def recall_at_k(retrieved,relevant):
 
@@ -45,8 +47,15 @@ recalls = []
 
 for query, gt in zip(queries, ground_truth):
 
-    retrieved = ...
+    query_embedding = retriever.embedder.embed([query],False)
 
-    recalls.append(recall_at_k(retrieved,gt,))
+    scores, ids = retriever.store.search_ids(
+        query_embedding,
+        k=10
+    )
 
-print(np.mean(recalls))
+    retrieved = ids[0].tolist()
+
+    recalls.append(recall_at_k(retrieved, gt))
+
+print(f"Recall@10 = {np.mean(recalls):.3f}")

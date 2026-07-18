@@ -35,8 +35,8 @@ class FlatRetriever:
     def __init__(self, llm, embedder = "BAAI/bge-base-en-v1.5", vectorstore = None):
         self.llm = llm
         self.embedder = Embedder(model_name=embedder)
-        if vectorstore is None: # Use the standard
-            self.store = VectorStore(index_path, metadata_path)
+        if vectorstore is None: # Use the standard pathfiles
+            self.store = VectorStore()
 
     def build_flatIP(self, chunks):
         """

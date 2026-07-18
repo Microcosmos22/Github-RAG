@@ -62,17 +62,15 @@ class VectorStore:
         with open(self.metadata_path) as f:
             self.metadata = json.load(f)
 
+    def search_ids(self, query_embedding, k=10):
+        scores, ids = self.index.search(query_embedding, k)
+        return scores, ids
+
     def search(self, query_embedding, k=5):
 
-        scores, ids = self.index.search(
-            query_embedding.astype(np.float32),
-            k
-        )
+        scores, ids = self.index.search(query_embedding.astype(np.float32),k)
 
-        return [
-            self.metadata[i]
-            for i in ids[0]
-        ]
+        return [self.metadata[i] for i in ids[0]]
 
 if __name__ == "__main__":
     # Load FAISS index
