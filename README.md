@@ -42,8 +42,8 @@ def is_palindrome(s):
 And its docstring:
 `Checks whether a string is a palindrome.`
 
-
-First, we search the snippets using $query_0$ directly: `identical_query`.
+### Benchmarking three retrieval methods with `CodeSearchNet`
+First, we search the snippets using the docstring directly (this is cheating, but a reference/benchmark): `identical_query`.
 Then, we search using an equivalent but differently worded query (real scenario simulation): `single_query`.
 Lastly, we implement the multi-query, simulating how we will combine different queries: `multi_query`.
 
@@ -61,5 +61,5 @@ IVF Recall@10 =              0.950                  0.930                 0.967
 ## 5. Discussion
 
 We expected identical query to give the best results. However, some functions may be badly annotated, reducing recall. 
-Single-query shows the lowest capacity of finding the correct code.
-Multi-query combines different querys of different wording, overcoming the badly phrased docstrings and finding the relevant context code snippets with highest recall.
+Single-query shows the **lowest recall** / capacity of finding the correct code.
+Multi-query combines different querys of different wording, overcoming the badly phrased docstrings and finding the relevant context code snippets with **highest recall**.
