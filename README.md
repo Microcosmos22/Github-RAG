@@ -26,7 +26,8 @@ Apart from the Indexing method, we can use techniques like Multi-Query searching
 We use the labeled dataset `CodeSearchNet`, which contains *code* functions and their *annotation* which is the docstring.
 
 Example function: 
-```def is_palindrome(s):
+```
+def is_palindrome(s):
     """
     Checks whether a string is a palindrome.
 
