@@ -22,6 +22,23 @@ Apart from the Indexing method, we can use techniques like Multi-Query searching
 ## 3. Methods
 
 We use the labeled dataset `CodeSearchNet`, which contains code functions and their annotation/$query_0$/docstring: $\( Code, Docstring \) $.
+
+Example function: 
+````def is_palindrome(s):
+    """
+    Checks whether a string is a palindrome.
+
+    Args:
+        s: The string to check.
+
+    Returns:
+        True if the string reads the same backwards, otherwise False.
+    """
+    return s == s[::-1]```
+And its docstring:
+`Checks whether a string is a palindrome.`
+
+
 First, we search the snippets using $query_0$ directly: `identical_query`.
 Then, we search using an equivalent but differently worded query (real scenario simulation): `single_query`.
 Lastly, we implement the multi-query, simulating how we will combine different queries: `multi_query`.
