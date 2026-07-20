@@ -4,14 +4,16 @@
 
 LLMs have enourmous reasoning capabilities at the cost that the original information, even though contained within the model, is embedded in the deep abstract layers. Retrieval-Augmented Generation (RAG) aims to overcome this shortage by providing context to the LLM in the form of a prompt:
 
-```prompt=f"""
+```
+prompt=f"""
 Answer using this context:
 
 {context}
 
 Question:
 {Original user question}
-"""```
+"""
+```
 
 ## 2. Problem
 
