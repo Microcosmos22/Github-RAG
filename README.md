@@ -19,14 +19,14 @@ Question:
 
 Finding the correct context / code snippet $s_i$ from the user query $q$ is the main task of a RAG, and is done in embedding space. That is, we use the encoder to find the vectors $\eta_s^i$ and $\eta_q$ and search the snippets using either FlatIndex or InverseFileIndex to find the best `top_k` matching snippets: $Min_i\(\eta_s^i, \eta_q\)$. We usually search for the best 10 matching snippets $\{i\}$.
 
-Apart from the Indexing method, we can use techniques like Multi-Query searching, where we find, using an LLM, four equivalent but differently worded queries $\eta_q^j$. We then find the best 10 matching snippets for each $j$, that is ${i}^j$, and compute the best 10 matches of this complete set $\{i\}_{Multi-query}$. This is expected to give a better result than single-querying.
+Apart from the Indexing method, we can use techniques like Multi-Query searching, where we find, using an LLM, four equivalent but differently worded queries $\eta_q^j$. We then find the best 10 matching snippets for each $j$, that is $\{i\}^j$, and compute the best 10 matches of this complete set $\{i\}_{Multi-query}$. This is expected to give a better result than single-querying.
 
 ## 3. Methods
 
 We use the labeled dataset `CodeSearchNet`, which contains code functions and their annotation/$query_0$/docstring: $\( Code, Docstring \) $.
 
 Example function: 
-````def is_palindrome(s):
+```def is_palindrome(s):
     """
     Checks whether a string is a palindrome.
 
@@ -36,7 +36,8 @@ Example function:
     Returns:
         True if the string reads the same backwards, otherwise False.
     """
-    return s == s[::-1]```
+    return s == s[::-1]
+```
 And its docstring:
 `Checks whether a string is a palindrome.`
 
