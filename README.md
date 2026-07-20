@@ -50,13 +50,13 @@ Lastly, we implement the multi-query, simulating how we will combine different q
 
 Knowing the Ground-truth index of the snippets and their docstrings, we can compute the Recall for each of the six retrieving methods.
 We use 540 augmented samples. IVF is meant to speed up the search of large databases while compromising accuracy/recall. We obtain:
-
+```
                          Identical Query         Single-query           Multi-query
 
 Flat Recall@10 =             0.961                  0.943                 0.972
 
 IVF Recall@10 =              0.950                  0.930                 0.967
-
+```
 ## 5. Discussion
 
 We expected identical query to give the best results. However, some functions may be badly annotated, reducing recall. 
