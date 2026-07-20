@@ -63,3 +63,12 @@ IVF Recall@10 =              0.950                  0.930                 0.967
 We expected identical query to give the best results. However, some functions may be badly annotated, reducing recall. 
 Single-query shows the **lowest recall** / capacity of finding the correct code.
 Multi-query combines different querys of different wording, overcoming the badly phrased docstrings and finding the relevant context code snippets with **highest recall**.
+
+Lastly, we see that the IVF method indeed compromises recall at the advantage of performing the fastest search.
+
+## 6. Outlook
+
+This benchmarking method will allow us to compare future Retrievers and techniques to maximize context quality, for example Hybrid retrieval.
+Next necessary step in this project will be to chunk the downloaded Github repo (which we want to build a RAG for) respecting functions, classes, etc. rather than blocks of 100 lines.
+Lastly, we wonder if the context needs multiple code snippets, how we could benchmark this scenario, since `CodeSearchNet` only contains single functions that dont necessarily work together.
+
