@@ -23,7 +23,7 @@ Apart from the Indexing method, we can use techniques like Multi-Query searching
 
 ## 3. Methods
 
-We use the labeled dataset `CodeSearchNet`, which contains *code* functions and their *annotation* which is the docstring $ ( Code, Docstring ) $.
+We use the labeled dataset `CodeSearchNet`, which contains *code* functions and their *annotation* which is the docstring.
 
 Example function: 
 ```def is_palindrome(s):
