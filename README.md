@@ -43,8 +43,12 @@ And its docstring:
 `Checks whether a string is a palindrome.`
 
 ### Benchmarking three retrieval methods with `CodeSearchNet`
+
 First, we search the snippets using the docstring directly (this is cheating, but a reference/benchmark): `identical_query`.
+
 Then, we search using an equivalent but differently worded query (real scenario simulation): `single_query`.
+We create four similar queries using Llama and Qwen.
+
 Lastly, we implement the multi-query, simulating how we will combine different queries: `multi_query`.
 
 ## 4. Results
